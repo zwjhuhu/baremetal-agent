@@ -1,3 +1,3 @@
 #!/bin/bash
-make baremetal
+make clean baremetal
 #bash mkvyos.sh $IMGDIR/vyos-agent.qcow2 target/zvr.tar.gz init.sh

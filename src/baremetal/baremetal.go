@@ -58,6 +58,7 @@ func parseAgentConfigInfo() {
 	if err = json.Unmarshal(content, &bootstrapInfo); err != nil {
 		panic(errors.Wrap(err, fmt.Sprintf("unable to JSON parse:\n %s", string(content))))
 	}
+	checkAgentConfigInfo()
 }
 
 func findPxenicIps(nic string) ([]string, error) {
@@ -197,7 +198,7 @@ func configureZvrFirewall() {
 
 func main() {
 
-	utils.InitLog("/var/lib/uit/baremetal-boot.log", false)
+	utils.InitLog("/var/lib/uit/baremetal-agent.log", false)
 	parseAgentConfigInfo()
 
 	loadPlugins()
@@ -207,7 +208,6 @@ func main() {
 		Port:         10002,
 		ReadTimeout:  10,
 		WriteTimeout: 10,
-		LogFile:      "/var/lib/uit/baremetal/baremetal-agent.log",
 	}
 	server.SetOptions(options)
 	server.Start()
