@@ -1,19 +1,23 @@
 package main
 
 import (
-	"baremetal/server"
 	"baremetal/plugin"
+	"baremetal/server"
 	"baremetal/utils"
-	"fmt"
+	"encoding/json"
 	"flag"
+	"fmt"
+	"io/ioutil"
 	"os"
+	"strings"
+
 	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
 )
 
 const (
 	VIRTIO_PORT_PATH     = "/dev/virtio-ports/applianceVm.port"
-	AGENT_CONFIG_FILE = "/var/lib/uit/baremetal/agent.conf"
+	AGENT_CONFIG_FILE    = "/var/lib/uit/baremetal/agent.conf"
 	TMP_LOCATION_FOR_ESX = "/tmp/bootstrap-info.json"
 	// use this rule number to set a rule which confirm route entry work issue ZSTAC-6170
 	ROUTE_STATE_NEW_ENABLE_FIREWALL_RULE_NUMBER = 9999
@@ -21,7 +25,7 @@ const (
 
 var bootstrapInfo map[string]interface{} = make(map[string]interface{})
 
-func loadPlugins()  {
+func loadPlugins() {
 	plugin.ApvmEntryPoint()
 	// plugin.DhcpEntryPoint()
 	// plugin.MiscEntryPoint()
@@ -54,30 +58,33 @@ func parseAgentConfigInfo() {
 	if err = json.Unmarshal(content, &bootstrapInfo); err != nil {
 		panic(errors.Wrap(err, fmt.Sprintf("unable to JSON parse:\n %s", string(content))))
 	}
-	return true
 }
 
 func findPxenicIps(nic string) ([]string, error) {
-	bash := Bash{
+	bash := utils.Bash{
 		Command: fmt.Sprintf("ip -o -f inet addr show %s | awk '/scope global/ {print $4}'", nic),
 	}
 	ret, o, _, err := bash.RunWithReturn()
+	var ips []string
 	if err != nil {
-		return []string, err
+		return ips, err
 	}
 	if ret != 0 {
-		return []string, errors.New(fmt.Sprintf("no ip with the nic[%s] found in the system", nic))
+		return ips, errors.New(fmt.Sprintf("no ip with the nic[%s] found in the system", nic))
 	}
 
 	o = strings.TrimSpace(o)
-	os := strings.Split(o, "\n")
-	return os, nil
+	ips = strings.Split(o, "\n")
+	return ips, nil
 }
 
 func checkAgentConfigInfo() {
-	pxenic,err := bootstrapInfo["pxenic"]
-	if !err || pxenic == "" {
+	pxenic := ""
+	tmp, ok := bootstrapInfo["pxenic"]
+	if !ok {
 		panic(errors.New("pxenic config error"))
+	} else {
+		pxenic = tmp.(string)
 	}
 	b := utils.Bash{
 		Command: fmt.Sprintf("ip link show dev %s &>/dev/null", pxenic),
@@ -85,37 +92,38 @@ func checkAgentConfigInfo() {
 	b.Run()
 	b.PanicIfError()
 
-	ips,err := findPxenicIps(pxenic)
+	ips, err := findPxenicIps(pxenic)
 	if err != nil {
 		panic(err)
-	} else if len() == 0 {
-		panic(erros.New(fmt.Sprintf("no ip find from nic %s", pxenic)))
+	} else if len(ips) == 0 {
+		panic(errors.New(fmt.Sprintf("no ip find from nic %s", pxenic)))
 	}
 
-	dhcpStartIp,err := bootstrapInfo["dhcpStartIp"]
-	if !err {
-		dhcpStartIp = ""
+	dhcpStartIp := ""
+	tmp, ok = bootstrapInfo["dhcpStartIp"]
+	if ok {
+		dhcpStartIp = tmp.(string)
 	}
-
-	dhcpEtartIp,err := bootstrapInfo["dhcpEtartIp"]
-	if !err || pxenic == "" {
-		dhcpEtartIp = ""
+	dhcpEndIp := ""
+	tmp, ok = bootstrapInfo["dhcpEndIp"]
+	if ok {
+		dhcpEndIp = tmp.(string)
 	}
 	ip1 := ""
 	ip2 := ""
 
 	if dhcpStartIp != "" {
-		for _,cidr := range ips {
-			if uitls.CheckCIDRContainsIp(dhcpStartIp,cidr) {
+		for _, cidr := range ips {
+			if utils.CheckCIDRContainsIp(dhcpStartIp, cidr) {
 				os := strings.Split(cidr, "/")
 				ip1 = os[0]
 				break
 			}
 		}
 	}
-	if dhcpEtartIp != "" {
-		for _,cidr := range ips {
-			if uitls.CheckCIDRContainsIp(dhcpEtartIp,cidr) {
+	if dhcpEndIp != "" {
+		for _, cidr := range ips {
+			if utils.CheckCIDRContainsIp(dhcpEndIp, cidr) {
 				os := strings.Split(cidr, "/")
 				ip2 = os[0]
 				break
@@ -132,13 +140,13 @@ func checkAgentConfigInfo() {
 		pxeip = ip1
 	} else if ip2 != "" && ip1 == "" {
 		pxeip = ip2
-	}else if ip1 != ip2 {
+	} else if ip1 != ip2 {
 		// startIP 和 endIP 不在一个网络段
-		panic(erros.New(fmt.Sprintf("dhcp startIP %s and endIP %s not in same cidr", ip1,ip2)))
-	} 
-	
-	// config dnsmasq
+		panic(errors.New(fmt.Sprintf("dhcp startIP %s and endIP %s not in same cidr", ip1, ip2)))
+	}
+	log.Debugf("choose pxe ip %s", pxeip)
 
+	// config dnsmasq
 
 }
 
@@ -187,19 +195,19 @@ func configureZvrFirewall() {
 	tree.Apply(false)
 }
 
-func main()  {
+func main() {
 
 	utils.InitLog("/var/lib/uit/baremetal-boot.log", false)
 	parseAgentConfigInfo()
 
 	loadPlugins()
 	// server.VyosLockInterface(configureZvrFirewall)()
-	options := &server.Options{
-		Ip: "0.0.0.0",
-		Port: 10002,
-		ReadTimeout: 10,
+	options := server.Options{
+		Ip:           "0.0.0.0",
+		Port:         10002,
+		ReadTimeout:  10,
 		WriteTimeout: 10,
-		LogFile: "/var/lib/uit/baremetal/baremetal-agent.log",
+		LogFile:      "/var/lib/uit/baremetal/baremetal-agent.log",
 	}
 	server.SetOptions(options)
 	server.Start()
