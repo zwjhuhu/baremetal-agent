@@ -1,0 +1,4 @@
+2020-08-06
+vyos 1.2.0
+1. change all arp_ignore set to 0 from https://phabricator.vyos.net/T300 need set interface arp_ignore by config ip enable-arp-ignore manually
+2. change kernel net.ipv4.conf.default.arp_filter = 1 in '/etc/sysctl.d/30-vyatta-router.conf' can be change by config ip disable-arp-filter 
