@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 	"time"
-	"zvr/server"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/utils"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"
@@ -16,7 +16,7 @@ import (
 
 const (
 	VIRTIO_PORT_PATH     = "/dev/virtio-ports/applianceVm.port"
-	BOOTSTRAP_INFO_CACHE = "/home/vyos/zvr/bootstrap-info.json"
+	BOOTSTRAP_INFO_CACHE = "/home/vyos/baremetal/bootstrap-info.json"
 	TMP_LOCATION_FOR_ESX = "/tmp/bootstrap-info.json"
 	// use this rule number to set a rule which confirm route entry work issue ZSTAC-6170
 	ROUTE_STATE_NEW_ENABLE_FIREWALL_RULE_NUMBER = 9999
@@ -520,7 +520,7 @@ func startZvr() {
 }
 
 func main() {
-	utils.InitLog("/home/vyos/zvr/zvrboot.log", false)
+	utils.InitLog("/home/vyos/baremetal/zvrboot.log", false)
 	waitIptablesServiceOnline()
 	if isOnVMwareHypervisor() {
 		parseEsxBootInfo()

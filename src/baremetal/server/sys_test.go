@@ -2,7 +2,7 @@ package server
 
 import (
 	"testing"
-	"zvr/utils"
+	"baremetal/utils"
 )
 
 func TestFindNicNameByMac(t *testing.T) {

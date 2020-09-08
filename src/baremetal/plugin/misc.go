@@ -3,8 +3,8 @@ package plugin
 import (
 	"fmt"
 	"io/ioutil"
-	"zvr/server"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/utils"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -15,7 +15,7 @@ const (
 	ECHO_PATH = "/echo"
 	/* please follow following rule to change the version:
 	http://confluence.zstack.io/pages/viewpage.action?pageId=34014178 */
-	VERSION_FILE_PATH = "/home/vyos/zvr/version"
+	VERSION_FILE_PATH = "/home/vyos/baremetal/version"
 )
 
 var (

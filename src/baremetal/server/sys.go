@@ -6,14 +6,14 @@ import (
 	"os"
 	"strings"
 	"sync"
-	"zvr/utils"
+	"baremetal/utils"
 
 	"github.com/Sirupsen/logrus"
 )
 
 var (
 	vyosScriptLock = &sync.Mutex{}
-	fileLockPath   = "/home/vyos/zvr/.vyosfilelock"
+	fileLockPath   = "/home/vyos/baremetal/.vyosfilelock"
 )
 
 /*

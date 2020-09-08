@@ -2,7 +2,7 @@ package server
 
 import (
 	"testing"
-	"zvr/utils"
+	"baremetal/utils"
 	"fmt"
 	"github.com/pkg/errors"
 	"net/http"

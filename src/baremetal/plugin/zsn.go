@@ -1,7 +1,7 @@
 package plugin
 
 import (
-	"zvr/server"
+	"baremetal/server"
 	"fmt"
 	"io/ioutil"
 	"encoding/json"

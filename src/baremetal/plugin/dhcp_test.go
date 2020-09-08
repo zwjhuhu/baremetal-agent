@@ -2,7 +2,7 @@ package plugin
 
 import (
 	"testing"
-	"zvr/server"
+	"baremetal/server"
 	"fmt"
 )
 

@@ -3,8 +3,8 @@ package plugin
 import (
 	"fmt"
 	"strings"
-	"zvr/server"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/utils"
 
 	"github.com/pkg/errors"
 )

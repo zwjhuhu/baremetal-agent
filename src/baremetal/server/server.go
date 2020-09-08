@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"strings"
 	"time"
-	"zvr/utils"
+	"baremetal/utils"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/pkg/errors"

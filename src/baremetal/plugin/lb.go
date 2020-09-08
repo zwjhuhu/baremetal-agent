@@ -15,8 +15,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
-	"zvr/server"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/utils"
 
 	log "github.com/Sirupsen/logrus"
 	haproxy "github.com/bcicen/go-haproxy"
@@ -29,10 +29,10 @@ const (
 	DELETE_LB_PATH          = "/lb/delete"
 	CREATE_CERTIFICATE_PATH = "/certificate/create"
 
-	LB_ROOT_DIR          = "/home/vyos/zvr/lb/"
-	LB_CONF_DIR          = "/home/vyos/zvr/lb/conf/"
-	CERTIFICATE_ROOT_DIR = "/home/vyos/zvr/certificate/"
-	LB_SOCKET_DIR        = "/home/vyos/zvr/lb/sock/"
+	LB_ROOT_DIR          = "/home/vyos/baremetal/lb/"
+	LB_CONF_DIR          = "/home/vyos/baremetal/lb/conf/"
+	CERTIFICATE_ROOT_DIR = "/home/vyos/baremetal/certificate/"
+	LB_SOCKET_DIR        = "/home/vyos/baremetal/lb/sock/"
 
 	LB_MODE_HTTPS = "https"
 

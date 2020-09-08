@@ -1,9 +1,9 @@
 package main
 
 import (
-	"zvr/server"
-	"zvr/plugin"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/plugin"
+	"baremetal/utils"
 	"fmt"
 	"flag"
 	"os"

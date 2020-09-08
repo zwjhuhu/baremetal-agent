@@ -3,7 +3,7 @@ package server
 import (
 	"testing"
 	"fmt"
-	"zvr/utils"
+	"baremetal/utils"
 )
 
 func TestSetFirewall(t *testing.T) {

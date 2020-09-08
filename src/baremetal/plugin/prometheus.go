@@ -5,9 +5,9 @@ import (
         "net/http"
         glog "log"
         "fmt"
-        "zvr/utils"
+        "baremetal/utils"
         "github.com/prometheus/client_golang/prometheus/promhttp"
-        "zvr/server"
+        "baremetal/server"
         log "github.com/Sirupsen/logrus"
 )
 

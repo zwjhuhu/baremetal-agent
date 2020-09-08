@@ -1,8 +1,8 @@
 package plugin
 
 import (
-	"zvr/server"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/utils"
 
 	log "github.com/Sirupsen/logrus"
 )

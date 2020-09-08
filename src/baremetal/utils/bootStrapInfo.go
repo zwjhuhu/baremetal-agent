@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	BOOTSTRAP_INFO_CACHE = "/home/vyos/zvr/bootstrap-info.json"
+	BOOTSTRAP_INFO_CACHE = "/home/vyos/baremetal/bootstrap-info.json"
 	DEFAULT_SSH_PORT     = 22
 )
 

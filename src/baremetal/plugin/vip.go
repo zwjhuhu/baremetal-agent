@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 	"unicode"
-	"zvr/server"
-	"zvr/utils"
+	"baremetal/server"
+	"baremetal/utils"
 
 	log "github.com/Sirupsen/logrus"
 	prom "github.com/prometheus/client_golang/prometheus"
